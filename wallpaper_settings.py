@@ -1,0 +1,13 @@
+_wallpaper_parameters = {"wallpaper_width": 1600,
+                         "wallpaper_height": 900,
+                         "kanji_size": 100,
+                         "kanji_pos_x": 800,
+                         "kanji_pos_y": 350,
+                         "furigana_size": 35,
+                         "furigana_pos_x": 800,
+                         "furigana_pos_y": 275,
+                         "definition_size": 40,
+                         "definition_offset": 40,
+                         "definition_width": 40,
+                         "definition_pos_x": 800,
+                         "definition_pos_y": 450}
