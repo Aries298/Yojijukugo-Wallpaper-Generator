@@ -1,7 +1,6 @@
 from PIL import ImageFont
 import ctypes
 from wallpaper_settings import _wallpaper_parameters
-import os
 from os.path import exists
 import random
 import csv
@@ -9,7 +8,6 @@ import textwrap
 from PIL import Image, ImageDraw
 import inspect
 import patterns
-from patterns import gen_hexagon
 
 '''
 Getting list of available patterns
@@ -36,9 +34,8 @@ def get_random_entry():
         entry = random.choice(data)
     return entry
 
+# Generated random background with a randomly chosen pattern
 def gen_background():
-    wallpaper_width = _wallpaper_parameters['wallpaper_width']
-    wallpaper_height = _wallpaper_parameters['wallpaper_height']
     img = random.choice(PATTERNS)()
     return img
 
@@ -47,9 +44,12 @@ def gen_kanji():
 
 
 def gen_wallpaper(entry):
+    # Read the data from the entry
     kanji, furigana, definition = entry
+    # Prepare the background
     img = gen_background()
 
+    # Set the generated image parameters
     kanji_size = _wallpaper_parameters['kanji_size']
     kanji_pos_x = _wallpaper_parameters['kanji_pos_x']
     kanji_pos_y = _wallpaper_parameters['kanji_pos_y']
@@ -62,28 +62,31 @@ def gen_wallpaper(entry):
     definition_pos_x = _wallpaper_parameters['definition_pos_x']
     definition_pos_y = _wallpaper_parameters['definition_pos_y']
 
+    # Create a PIL Image object, draw a background
     draw = ImageDraw.Draw(img)
 
     # Drawing kanji
     kanji_font_file = 'C:/Users/Admin/Desktop/Programowanie/Yojijukugo Wallpaper Generator/fonts/GenEiLateGo.otf'
     kanji_font = ImageFont.truetype(kanji_font_file, kanji_size)
-    offsets = [x // 2 for x in kanji_font.getsize(kanji)]
-    draw.text((kanji_pos_x - offsets[0], kanji_pos_y - offsets[1]), kanji, font=kanji_font, stroke_width=1, stroke_fill='black')
+    offsets = [x // 2 for x in kanji_font.getbbox(kanji)]
+    draw.text((kanji_pos_x - offsets[2], kanji_pos_y - offsets[3]), kanji, font=kanji_font, stroke_width=1, stroke_fill='black')
 
     # Drawing furigana
     furigana_font = ImageFont.truetype(kanji_font_file, furigana_size)
-    offsets = [x // 2 for x in furigana_font.getsize(furigana)]
-    draw.text((furigana_pos_x - offsets[0], furigana_pos_y - offsets[1]), furigana, font=furigana_font, stroke_width=1, stroke_fill='black')
+    offsets = [x // 2 for x in furigana_font.getbbox(furigana)]
+    draw.text((furigana_pos_x - offsets[2], furigana_pos_y - offsets[3]), furigana, font=furigana_font, stroke_width=1, stroke_fill='black')
 
     # Drawing definition
     definition_font = ImageFont.truetype(kanji_font_file, definition_size)
     lines = textwrap.wrap(definition, definition_width)
 
+    # Text wrapping
     for i, line in enumerate(lines):
-        offset = definition_font.getsize(line)[0] // 2
+        offset = definition_font.getbbox(line)[2] // 2
         draw.text((definition_pos_x - offset, definition_pos_y + i * definition_size), line, font=definition_font, stroke_width=1, stroke_fill='black')
+
+
     number = 1
-    '''C:/Users/Admin/Desktop/Programowanie/Yojijukugo Wallpaper Generator/wallpapers'''
     wallpaper_name = u"wallpaper_%s_%04d.png" % (kanji, number)
     while(exists(f'C:/Users/Admin/Desktop/Programowanie/Yojijukugo Wallpaper Generator/wallpapers/{wallpaper_name}')):
         number += 1
@@ -91,7 +94,6 @@ def gen_wallpaper(entry):
 
     img.save(f'C:/Users/Admin/Desktop/Programowanie/Yojijukugo Wallpaper Generator/wallpapers/{wallpaper_name}', "PNG")
     full_path = f'C:/Users/Admin/Desktop/Programowanie/Yojijukugo Wallpaper Generator/wallpapers/{wallpaper_name}'
-    print(full_path)
     return full_path
 
 def set_wallpaper():
