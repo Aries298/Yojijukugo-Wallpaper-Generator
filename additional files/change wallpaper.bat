@@ -1,0 +1,1 @@
+py "PATH_TO_MAIN_FILE" %*
